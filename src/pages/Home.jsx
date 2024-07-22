@@ -4,6 +4,7 @@ import { fetchProducts } from "../util/http";
 import CircularCarousel from "../ui/CircularCarousel";
 import { ProgressSpinner } from "primereact/progressspinner";
 
+
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState(null);
   function handleClickCategory(category) {
@@ -46,6 +47,7 @@ export default function HomePage() {
   });
 
   return (
+
     <div className="flex flex-col gap-12 mt-[8rem]">
       <div className="flex justify-between gap-6">
         <div className="flex h-[22rem] items-center bg-white px-3 mt-8 w-[80%] justify-between">

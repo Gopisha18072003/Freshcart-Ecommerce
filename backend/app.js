@@ -10,11 +10,18 @@ const globalErrorHandler = require('./controller/errorController');
 const cors = require('cors');
 const app = express();
 const AppError = require('./utils/appError');
+const cookieParser = require('cookie-parser');
 
 app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
-app.use(cors());
+
+
+app.use(cors({ 
+    origin: 'http://localhost:5173',
+    credentials: true,
+}));
+app.use(cookieParser());
 app.use(hpp({
     whitelist: [
         'price',

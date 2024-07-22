@@ -51,16 +51,13 @@ const userSchema = new mongoose.Schema({
         default: true,
         select: false
     },
-    cart : [{}],
-    wishlist: [{}],
-    orderHistory: [{}],
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
     }
 
-});
+}, {timestamps: true});
 
 userSchema.pre('save', async function(next) {
     if(!this.isModified('password')) return next();
@@ -100,6 +97,6 @@ userSchema.methods.createPasswordResetToken =  function() {
     return resetToken;
 }
 
-const User = mongoose.model('Users', userSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;

@@ -19,21 +19,20 @@ const mailTransporter = nodemailer.createTransport({
     }
 });
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+const signToken = (id, expiresIn) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {expiresIn});
 };
 
 const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id, process.env.JWT_EXPIRES_IN);
+
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-  const token = signToken(user._id);
   // SENDING COOKIE
   res.cookie("jwt", token, cookieOptions);
 
@@ -91,13 +90,33 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.refresh = catchAsync(async (req, res) => {
+  let token;
+    if(req.cookie.jwt) {
+        token = req.cookie.jwt
+    }
+
+    if(!token) {
+        return next(
+            new AppError('You are not Logged in')
+        )
+    }
+
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    const freshUser = await User.findById(decoded.id);
+    if(!freshUser) {
+        return next(
+            new AppError('Invalid token', 400)
+        )
+    }
+    return res.json({status: 'success', data: {user: freshUser}})
+});
+
 exports.protect = catchAsync( async (req, res, next) => {
     let token;
-    if(
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        token = req.headers.authorization.split(' ')[1];
+    if(req.cookie.jwt) {
+        token = req.cookie.jwt
     }
 
     if(!token) {
@@ -118,7 +137,6 @@ exports.protect = catchAsync( async (req, res, next) => {
         return next(new AppError("User has recently changed the password"))
     }
     req.user = freshUser;
-    console.log(freshUser);
     next();
 }) 
 

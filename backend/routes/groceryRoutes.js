@@ -8,7 +8,7 @@ router.use(express.json());
 
 router
   .route("/")
-  .get(groceryController.getAllGroceries)
+  .get( groceryController.getAllGroceries)
 router.post('/addGrocery', authController.protect, authController.restrictTo('admin'), groceryController.addGrocery);
 
 router

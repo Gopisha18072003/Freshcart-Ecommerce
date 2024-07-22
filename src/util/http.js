@@ -21,3 +21,20 @@ export async function fetchProducts({signal, type}) {
     const {data} = await response.json();
     return data.groceries;
 }
+
+export async function loginUser(userData) {
+    const response = await fetch('http://127.0.0.1:8000/api/v1/freshcart/user/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(userData),
+        credentials: 'include',
+    });
+
+    if(!response.ok) {
+        console.log('login failed')
+        throw new Error('Invalid Email or Password')
+    } 
+    
+    const data = await response.json();
+    return data;
+}
