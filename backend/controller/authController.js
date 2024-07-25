@@ -24,25 +24,29 @@ const signToken = (id, expiresIn) => {
 };
 
 const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id, process.env.JWT_EXPIRES_IN);
+  
+  const accessToken = signToken(user._id, process.env.JWT_ACCESS_EXPIRES_IN); 
+  const refreshToken = signToken(user._id, process.env.JWT_REFRESH_EXPIRES_IN); 
 
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
+    sameSite: 'None',
+    secure: true, // Ensure secure cookies in production
   };
-  // SENDING COOKIE
-  res.cookie("jwt", token, cookieOptions);
 
   // remove the password field from the output only
   user.password = undefined;
-  res.status(statusCode).json({
+  res
+  .cookie("jwt", refreshToken, cookieOptions)
+  .status(statusCode)
+  .json({
     status: 'success',
-    token,
     data: {
       user,
+      accessToken
     },
   });
 };
@@ -91,27 +95,17 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.refresh = catchAsync(async (req, res) => {
-  let token;
-    if(req.cookie.jwt) {
-        token = req.cookie.jwt
-    }
+  const refreshToken = req.cookies.jwt;
+  console.log(refreshToken);
+  if (!refreshToken) return res.status(401).json({ status: 'fail', message: 'No refresh token' });
 
-    if(!token) {
-        return next(
-            new AppError('You are not Logged in')
-        )
-    }
+  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(401).json({ status: 'fail', message: 'Invalid refresh token' });
 
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-    const freshUser = await User.findById(decoded.id);
-    if(!freshUser) {
-        return next(
-            new AppError('Invalid token', 400)
-        )
-    }
-    return res.json({status: 'success', data: {user: freshUser}})
-});
+    const newAccessToken = signToken(decoded.id, process.env.JWT_ACCESS_EXPIRES_IN);
+    res.status(200).json({ status: 'success', accessToken: newAccessToken });
+  });
+})
 
 exports.protect = catchAsync( async (req, res, next) => {
     let token;

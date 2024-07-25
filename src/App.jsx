@@ -16,6 +16,9 @@ import Signin from "./pages/Signin.jsx";
 import Signup from "./pages/Signup.jsx";
 
 import { action as signupAction } from "./pages/Signup.jsx";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor } from "./store/store.js";
+
 
 function App() {
   const router = createBrowserRouter([
@@ -57,11 +60,13 @@ function App() {
   ]);
   return (
     <Provider store={store}>
-      <PrimeReactProvider>
-        <QueryClientProvider client={querClient}>
+      <PersistGate persistor={persistor} loading={null}>
+        <PrimeReactProvider >
+          <QueryClientProvider client={querClient}>
             <RouterProvider router={router} />
-        </QueryClientProvider>
-      </PrimeReactProvider>
+          </QueryClientProvider>
+        </PrimeReactProvider>
+      </PersistGate>
     </Provider>
   );
 }

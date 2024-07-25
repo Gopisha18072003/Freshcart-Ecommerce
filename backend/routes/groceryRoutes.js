@@ -17,8 +17,7 @@ router
   .patch(authController.protect, authController.restrictTo('admin'),groceryController.updateGrocery)
   .delete(authController.protect, authController.restrictTo('admin'),groceryController.deleteGrocery);
 
-
-
 router.use('/:itemId/reviews', reviewRoutes);
+
 
 module.exports = router;

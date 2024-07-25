@@ -9,26 +9,44 @@ import {
 
 import signInImage from "../assets/login_page_image.jpg";
 import { useState } from "react";
-import { loginUser } from "../util/http";
-import { useMutation } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from '../store/auth-slice';
 
 export default function Signin() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {mutate, isPending, isError, error}  = useMutation({
-    mutationFn: loginUser,
-    onSuccess: () => {
-      navigate('/')
-    }
-  })
-
-  function handleSubmit(event) {
+  const { loading, error } = useSelector((state) => state.auth);
+  async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
-    mutate(data);
+    try {
+      dispatch(signInStart());
+      const res = await fetch('http://127.0.0.1:8000/api/v1/freshcart/user/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+    const response = await res.json();
+    console.log(response)
+    if (!response.status === 'success') {
+      dispatch(signInFailure(data));
+      return;
+    }
+    dispatch(signInSuccess(data));
+    console.log('loggedIn')
+    navigate('/');
+  } catch (error) {
+    dispatch(signInFailure(error));
   }
+}
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(null);
@@ -70,6 +88,7 @@ export default function Signin() {
                     <input
                       type="email"
                       name="email"
+                      id='email'
                       placeholder="johndoe123@gmail.com"
                       onChange={handleEmailChange}
                       className={`appearance-none focus:outline-none w-4/5 text text-slate-800 poppins-regular `}
@@ -109,7 +128,7 @@ export default function Signin() {
                 </div>
                 <button className="poppins-semibold px-2 py-2 rounded-md bg-myGreen-dark text-white tracking-wide mb-2 active:bg-green-600 hover:text-white text-lg">
                   {
-                    isPending ? <ProgressSpinner style={{width: '30px', height: '30px', }} strokeWidth="8" fill='#06D001' animationDuration=".5s" />: 'Login'
+                    loading? <ProgressSpinner style={{width: '30px', height: '30px', }} strokeWidth="8" fill='#06D001' animationDuration=".5s" />: 'Login'
                     }
                             
                 </button>

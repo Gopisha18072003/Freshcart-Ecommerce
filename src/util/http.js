@@ -27,7 +27,6 @@ export async function loginUser(userData) {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(userData),
-        credentials: 'include',
     });
 
     if(!response.ok) {
@@ -36,5 +35,6 @@ export async function loginUser(userData) {
     } 
     
     const data = await response.json();
+    localStorage.setItem('accessToken', data.accessToken);
     return data;
 }
