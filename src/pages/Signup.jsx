@@ -271,6 +271,6 @@ export async function action({request, params}) {
     password: data.get('password'),
     confirmPassword: confirmPassword
   }
-  console.log(signupData);
+
   return redirect('/');
 }

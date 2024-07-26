@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 
 export const querClient = new QueryClient();
 
-export async function fetchProducts({signal, type}) {
+export async function fetchProducts({signal, type, filters, sortBy}) {
     let url = 'http://127.0.0.1:8000/api/v1/freshcart/';
     if(type === 'featured') {
         url += '?isFeatured=true';
@@ -10,6 +10,28 @@ export async function fetchProducts({signal, type}) {
         url += '?sort=-ordersQuantity&limit=10';
     } else if(type == 'discounted') {
         url += '?discount[gte]=50'
+    }
+    if(filters) {
+        url += '?'
+        for (const filter in filters) {
+            if(filter == 'category'){
+                const filterVals = filters[filter].join(',')
+                url += `${filter}=${filterVals}&`
+            } else if(filter == 'price') {
+                url += `${filter}[lt]=${filters[filter]}&`
+            }else if(filter == 'averageRating') {
+                url += `${filter}[gt]=${filters[filter]}&`
+            }else if(filter == 'quantity') {
+                url += `${filter}[gt]=0&`
+            }else if(filter == 'isOrganic') {
+                url += `${filter}=true`
+            }
+        }
+    if(sortBy) {
+        url += `sort=${sortBy}`
+        console.log(url)
+    }
+        
     }
     const response = await fetch(url, {signal: signal});
     if(!response.ok) {
@@ -38,3 +60,20 @@ export async function loginUser(userData) {
     localStorage.setItem('accessToken', data.accessToken);
     return data;
 }
+
+
+export const fetchCategoryCounts = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/v1/freshcart/category');
+      if (!response.ok) {
+        throw new Error('Failed to fetch category counts');
+      }
+      const data = await response.json();
+      console.log('Hello'); // This should log if the response is ok
+      return data.data;
+    } catch (error) {
+      console.error('Error fetching category counts:', error);
+      throw error; // Re-throw the error after logging it
+    }
+  };
+  

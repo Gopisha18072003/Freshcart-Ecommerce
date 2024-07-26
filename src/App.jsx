@@ -28,7 +28,7 @@ function App() {
       loader: rootLoader,
       errorElement: <ErrorPage />,
       children: [
-        { index: true, element: <HomePage /> },
+        { index: true, element: <HomePage />},
         { path: "/shop", element: <ShopPage /> },
         {
           path: "/cart",
@@ -78,7 +78,7 @@ export const categories = [
   { name: "Meats", value: "meats", icon: "/icons/barbecue.png" },
   { name: "Seafoods", value: "packed seafoods", icon: "/icons/seafood.png" },
   { name: "Dairy", value: "dairy", icon: "/icons/dairy.png" },
-  { name: "Groceies", value: "grocery", icon: "/icons/grocery.png" },
+  { name: "Groceries", value: "grocery", icon: "/icons/grocery.png" },
   { name: "Poultry", value: "poultry", icon: "/icons/poultry.png" },
   { name: "Frozen", value: "frozen foods", icon: "/icons/frozen.png" },
 ];

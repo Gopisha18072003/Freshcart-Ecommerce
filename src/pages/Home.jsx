@@ -1,15 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { fetchProducts } from "../util/http";
+import { fetchProducts, fetchCategoryCounts } from "../util/http";
 import CircularCarousel from "../ui/CircularCarousel";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addFilter, removeFilter } from "../store/ui-slice";
+import image from '../assets/noProductFound.png'
+import { useEffect } from "react";
+
 
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState(null);
+  const [count, setCount] = useState(0)
   function handleClickCategory(category) {
     setActiveCategory(category);
   }
+
+  const {
+    data: categoryCounts,
+    isPending: isPendingCategoryCounts
+  } = useQuery({
+    queryKey: ["categoryCounts"],
+    queryFn:  fetchCategoryCounts,
+  });
 
   const [activeSection, setActiveSection] = useState("featured");
   function handleClickSection(section) {
@@ -34,6 +49,16 @@ export default function HomePage() {
   } = useQuery({
     queryKey: ["products", "bestSeller-products"],
     queryFn: ({ signal }) => fetchProducts({ signal, type: "bestseller" }),
+  }); 
+
+
+   const {
+    data: categoryProducts,
+    isPending: isPendingCategoryProducts,
+    isError: isErrorCategoryProducts,
+  } = useQuery({
+    queryKey: [activeCategory],
+    queryFn: ({ signal }) => fetchProducts({ signal, filters: {'category': [activeCategory]} }),
   });
 
   const {
@@ -46,8 +71,17 @@ export default function HomePage() {
     queryFn: ({ signal }) => fetchProducts({ signal, type: "discounted" }),
   });
 
-  return (
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
+  function handleShopNow(filter) {
+    dispatch(removeFilter())
+    dispatch(addFilter(filter))
+    console.log('clicked')
+    navigate('/shop')
+  }
+
+  return (
     <div className="flex flex-col gap-12 mt-[8rem]">
       <div className="flex justify-between gap-6">
         <div className="flex h-[22rem] items-center bg-white px-3 mt-8 w-[80%] justify-between">
@@ -62,7 +96,7 @@ export default function HomePage() {
               Assertively target market-driven intellectual capital with
               worldwide human capital holistic
             </p>
-            <button className="bg-myGreen-dark px-4 py-4 flex gap-4 poppins-bold text-white rounded-md mt-6">
+            <Link className="bg-myGreen-dark px-4 py-4 flex gap-4 poppins-bold text-white rounded-md mt-6 w-[10rem] shopNow" to='/shop' >
               Shop Now
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +112,7 @@ export default function HomePage() {
                   d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
                 />
               </svg>
-            </button>
+            </Link>
           </div>
           <img
             src="./src/assets/hero-bg.png"
@@ -95,7 +129,7 @@ export default function HomePage() {
             Organic Foods Up
           </h3>
           <h3 className="poppins-semibold text-2xl text-white">To 50% off</h3>
-          <button className="flex bg-orange-500 w-1/2 poppins-medium text-md text-white px-2 py-2 gap-2 rounded-md mt-6 items-center">
+          <button className="flex bg-orange-500 w-1/2 poppins-medium text-md text-white px-2 py-2 gap-2 rounded-md mt-6 items-center" onClick={() => handleShopNow({'isOrganic': true})}>
             Shop Now
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -173,7 +207,7 @@ export default function HomePage() {
                       : "bg-orange-500"
                   } `}
                 ></span>
-                {} items
+                {!isPendingCategoryCounts && categoryCounts && <span className="px-1 font-semibold">{categoryCounts['vegetables']}</span>} items
               </p>
             </li>
             <li
@@ -226,7 +260,7 @@ export default function HomePage() {
                     activeCategory === "drinks" ? "bg-white" : "bg-orange-500"
                   } `}
                 ></span>
-                {} items
+                {!isPendingCategoryCounts && categoryCounts && <span className="px-1 font-semibold">{categoryCounts['drinks'] || 0}</span>} items
               </p>
             </li>
             <li
@@ -273,7 +307,7 @@ export default function HomePage() {
                     activeCategory === "dairy" ? "bg-white" : "bg-orange-500"
                   } `}
                 ></span>
-                {} items
+                {!isPendingCategoryCounts && categoryCounts && <span className="px-1 font-semibold">{categoryCounts['dairy']}</span>} items
               </p>
             </li>
             <li
@@ -282,7 +316,7 @@ export default function HomePage() {
                   ? "bg-orange-400 text-white shadow-2xl shadow-orange-300"
                   : "bg-white"
               } `}
-              onClick={() => handleClickCategory("meat")}
+              onClick={() => handleClickCategory("meats")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -319,7 +353,7 @@ export default function HomePage() {
                     activeCategory === "meat" ? "bg-white" : "bg-orange-500"
                   } `}
                 ></span>
-                {} items
+                {!isPendingCategoryCounts && categoryCounts && <span className="px-1 font-semibold">{categoryCounts['meats']}</span>} items
               </p>
             </li>
             <li
@@ -374,7 +408,7 @@ export default function HomePage() {
                     activeCategory === "fruits" ? "bg-white" : "bg-orange-500"
                   } `}
                 ></span>
-                {} items
+                {!isPendingCategoryCounts && categoryCounts && <span className="px-1 font-semibold">{categoryCounts['fruits']}</span>} items
               </p>
             </li>
             <li
@@ -443,18 +477,48 @@ export default function HomePage() {
                     activeCategory === "cleaning" ? "bg-white" : "bg-orange-500"
                   } `}
                 ></span>
-                {} items
+               {!isPendingCategoryCounts && categoryCounts && <span className="px-1 font-semibold">{categoryCounts['cleanings'] || 0}</span>} items
               </p>
             </li>
           </ul>
         </nav>
+        <div>
+          {
+            isPendingCategoryProducts && (
+              <div className="h-[24rem] w-full flex justify-center items-center">
+            <ProgressSpinner
+              style={{ width: "50px", height: "50px" }}
+              strokeWidth="8"
+              fill="white"
+              animationDuration=".5s"
+              className="custom-spinner"
+            />
+          </div>
+            )
+          }
+          {
+            !isPendingCategoryProducts && categoryProducts.length == 0 && activeCategory && (
+              <div className="w-full bg-white mt-8 flex flex-col justify-center items-center">
+                <img src={image} className="h-[24rem] w-[32rem]"/>
+                <p className="py-4 poppins-bold text-xl">No products found</p>
+              </div>
+            )
+          }
+          {
+            !isPendingCategoryProducts && categoryProducts.length >0 && (
+              <div>
+                <CircularCarousel avbProducts={categoryProducts} />
+              </div>
+            )
+          }
+        </div>
       </div>
 
       <div className="flex">
         <div className="w-[30%] section1 flex flex-col gap-4 p-8">
           <p className="lobster-regular text-myGreen-dark">Enjoy up to 20%</p>
           <h3 className="poppins-bold text-2xl">Fresh Vegetables</h3>
-          <button className="flex gap-1 bg-myGreen-dark w-[7rem] text-white poppins-semibold items-center p-2 rounded-md text-sm justify-center">
+          <button className="flex gap-1 bg-myGreen-dark w-[7rem] text-white poppins-semibold items-center p-2 rounded-md text-sm justify-center" onClick={() => handleShopNow({'category': ['vegetables']})}>
             Shop Now
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -484,7 +548,7 @@ export default function HomePage() {
             <p className="text-gray-400 poppins-regular text-sm">
               Progressive models functionalized supply chains
             </p>
-            <button className="text-white bg-orange-500 rounded-md flex gap-2 poppins-semibold text-sm p-3 w-[8rem] items-center">
+            <button className="text-white bg-orange-500 rounded-md flex gap-2 poppins-semibold text-sm p-3 w-[8rem] items-center" onClick={() => handleShopNow({})}>
               Shop Now
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -598,3 +662,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+

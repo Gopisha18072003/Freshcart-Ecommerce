@@ -12,8 +12,16 @@ class APIFeatures {
         // 1B) Advance filtering
 
         let queryStr = JSON.stringify(queryObj);
-        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-        this.query = this.query.find(JSON.parse(queryStr));
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt|in)\b/g, (match) => `$${match}`);
+        const queryObj2 = JSON.parse(queryStr)
+        let {category} = {...queryObj2}
+        if(category) {
+            const values = category.split(',') 
+            queryObj2.category = {$in: values}
+        }
+        this.query = this.query.find(queryObj2);
+
+
         return this;
     }
 

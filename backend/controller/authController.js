@@ -96,7 +96,6 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.refresh = catchAsync(async (req, res) => {
   const refreshToken = req.cookies.jwt;
-  console.log(refreshToken);
   if (!refreshToken) return res.status(401).json({ status: 'fail', message: 'No refresh token' });
 
   jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {

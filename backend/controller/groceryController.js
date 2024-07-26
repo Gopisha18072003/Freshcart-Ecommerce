@@ -56,3 +56,24 @@ exports.updateGrocery = catchAsync(async (req, res, next) => {
     data: {grocery}
   })
 })
+
+exports.getNoOfItemsInCategory = catchAsync(async (req, res, next) => {
+  const  aggregationResult = await GroceryItems.aggregate([
+    {
+      $group: {
+        _id: "$category", // Group by the 'category' field
+        count: { $sum: 1 } // Sum 1 for each document in the group to get the count
+      }
+    },
+  
+  ]);
+  const result = {};
+  aggregationResult.forEach(item => {
+    result[item._id] = item.count;
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: result
+  });
+})

@@ -10,6 +10,7 @@ router
   .route("/")
   .get( groceryController.getAllGroceries)
 router.post('/addGrocery', authController.protect, authController.restrictTo('admin'), groceryController.addGrocery);
+router.get('/category', groceryController.getNoOfItemsInCategory)
 
 router
   .route("/:id")

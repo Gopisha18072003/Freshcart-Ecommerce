@@ -4,7 +4,6 @@ import { MultiSelect } from 'primereact/multiselect';
 import RangeInput from "./RangeInput";
 export default function MultipleSelect({optionsList}) {
     const [selectedValues, setSelectedValues] = useState(null);
-    console.log(selectedValues)
 
     const optionTemplate = (option) => {
         return (

@@ -26,14 +26,13 @@ export default function MainNavigation({ products, classes }) {
       if(!response) {
         dispatch(signOut)
       }
-      console.log('Validating Token')
     }
   }
   validateToken()
   }, [user, dispatch]);
 
   return (
-    <div className={`bg-white pt-4 px-8 ${classes} w-full z-10 pb-2`}>
+    <div className={`bg-white pt-4 px-8 ${classes} w-full z-10 pb-8`}>
       <div className="flex justify-between items-center">
         <h1 className="poppins-bold text-2xl">Freshcart</h1>
         <div id="search-bar" className="flex items-center ">

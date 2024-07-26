@@ -1,6 +1,6 @@
 import { Rating } from "primereact/rating";
 import { useSelector, useDispatch } from "react-redux";
-import { addItemToCart, removeItemToCart } from "../store/ui-slice";
+import { addItemToCart, removeItemToCart } from "../store/cart-slice";
 
 function handleAddWishlist(event) {
     event.target.setAttribute('fill', '#06D001'); // Change to desired fill color
