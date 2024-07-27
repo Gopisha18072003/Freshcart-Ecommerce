@@ -38,8 +38,8 @@ export default function ShopPage() {
         <h3 className="poppins-semibold">Sort By</h3>
       <select name="sort" id="sort" onChange={handleSortChange} className="border-2 border-myGreen-light rounded-md poppins-regular p-1 text-sm">
         <option value="" selected={sort == ''}>None</option>
-        <option value="price" selected={sort == 'price'} >Price: Low to High</option>
-        <option value="-price" selected={sort == '-price'}>Price: High to Low</option>
+        <option value="finalPrice" selected={sort == 'finalPrice'} >Price: Low to High</option>
+        <option value="-finalPrice" selected={sort == '-finalPrice'}>Price: High to Low</option>
         <option value="-averageRating" selected={sort == '-averageRating'}>Rating</option>
         <option value="-ordersQuantity" selected={sort == '-ordersQuantity'}>Popularity</option>
       </select>

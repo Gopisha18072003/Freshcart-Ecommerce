@@ -400,3 +400,11 @@ button:hover svg{
   transition: cubic-bezier(0.075, 0.82, 0.165, 1);
   transform: translateX(4px);
 }
+
+#navBarProfile .active {
+  background-color: rgb(228, 252, 209);
+  border-left-width: 5px;
+  border-color: #04d02c;
+  color: #4caf50;
+  font-weight: 600;
+}

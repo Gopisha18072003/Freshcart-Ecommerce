@@ -1,5 +1,6 @@
 import { Link, redirect } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ProgressSpinner } from "primereact/progressspinner";
 import { Form } from "react-router-dom";
 import {
   faEye,
@@ -10,8 +11,54 @@ import {
 import signupImage from "../assets/signUp.jpg";
 import { useRef } from "react";
 import { useState } from "react";
+import { useNavigate} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+  clearModal,
+} from "../store/auth-slice";
 
 export default function Signup() {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error, modal } = useSelector((state) => state.auth);
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    const customizedData = {name: `${data['firstName']} ${data['lastName']}`, ...data}
+    console.log(customizedData);
+    try {
+      dispatch(signInStart());
+      const res = await fetch(
+        "http://127.0.0.1:8000/api/v1/freshcart/user/signup",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(customizedData),
+        }
+      );
+      const response = await res.json();
+      if (!response.status === "success") {
+        dispatch(signInFailure(data));
+        setTimeout(() => dispatch(clearModal()), 3000);
+        return;
+      }
+      dispatch(signInSuccess(response.data.user));
+      setTimeout(() => dispatch(clearModal()), 3000);
+      navigate("/");
+    } catch (error) {
+      dispatch(signInFailure(error));
+      setTimeout(() => dispatch(clearModal()), 3000)
+    }
+  }
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -73,7 +120,8 @@ export default function Signup() {
             </div>
           </div>
 
-          <Form method="post">
+          <form
+                  onSubmit={handleSubmit}>
             <div className="signupForm mb-6 max-h-56 overflow-y-scroll text-left scrollable pr-2">
               <div className="mb-6">
                 <label
@@ -226,10 +274,19 @@ export default function Signup() {
                 }
               </div>
             </div>
-            <button  className="poppins-semibold tracking-wide p-2 bg-myGreen-dark mb-2 hover:bg-green-600 rounded-md text-white disabled:bg-green-600">
-              Sign Up
-            </button>
-          </Form>
+            <button className="poppins-semibold px-2 py-2 rounded-md bg-myGreen-dark text-white tracking-wide mb-2 active:bg-green-600 hover:text-white text-lg">
+                    {loading ? (
+                      <ProgressSpinner
+                        style={{ width: "30px", height: "30px" }}
+                        strokeWidth="8"
+                        fill="#06D001"
+                        animationDuration=".5s"
+                      />
+                    ) : (
+                      "Sign Up"
+                    )}
+                  </button>
+          </form>
 
           <div>
             <p className="poppins-regular">

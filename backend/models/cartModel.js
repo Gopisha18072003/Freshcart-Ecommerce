@@ -9,8 +9,6 @@ const cartSchema = mongoose.Schema({
     items: [],
 },
     {
-        toJSON: {virtuals: true},
-        toObject: {virtuals: true},
         timeStamps: true
     }
 );

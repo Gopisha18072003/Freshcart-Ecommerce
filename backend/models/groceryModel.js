@@ -45,6 +45,9 @@ const groceryItemSchema = new mongoose.Schema({
   parameter: {
     type: String,
     required: [true, 'parameter is required']
+  },
+  finalPrice: {
+    type: Number
   }
 });
 
@@ -52,6 +55,11 @@ groceryItemSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+groceryItemSchema.pre('save', function(next) {
+  this.finalPrice = this.price - this.price*this.discount/100
+  next();
+});
+  
 
 const groceryItems = mongoose.model("groceryItems", groceryItemSchema);
 

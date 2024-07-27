@@ -6,9 +6,9 @@ export async function fetchProducts({signal, type, filters, sortBy}) {
     let url = 'http://127.0.0.1:8000/api/v1/freshcart/';
     if(type === 'featured') {
         url += '?isFeatured=true';
-    }else if(type === 'bestseller') {
+    }else if(type === 'bestSeller') {
         url += '?sort=-ordersQuantity&limit=10';
-    } else if(type == 'discounted') {
+    } else if(type == 'popular') {
         url += '?discount[gte]=50'
     }
     if(filters) {
@@ -29,7 +29,6 @@ export async function fetchProducts({signal, type, filters, sortBy}) {
         }
     if(sortBy) {
         url += `sort=${sortBy}`
-        console.log(url)
     }
         
     }
@@ -60,6 +59,21 @@ export async function loginUser(userData) {
     localStorage.setItem('accessToken', data.accessToken);
     return data;
 }
+export async function logoutUser() {
+    const response = await fetch('http://127.0.0.1:8000/api/v1/freshcart/user/logout', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+    });
+
+    if(!response.ok) {
+        console.log('logout failed')
+        throw new Error('Something went wrong')
+    } 
+    
+    const data = await response.json();
+    localStorage.removeItem('accessToken');
+    return data;
+}
 
 
 export const fetchCategoryCounts = async () => {
@@ -69,7 +83,6 @@ export const fetchCategoryCounts = async () => {
         throw new Error('Failed to fetch category counts');
       }
       const data = await response.json();
-      console.log('Hello'); // This should log if the response is ok
       return data.data;
     } catch (error) {
       console.error('Error fetching category counts:', error);

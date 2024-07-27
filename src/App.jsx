@@ -18,6 +18,8 @@ import Signup from "./pages/Signup.jsx";
 import { action as signupAction } from "./pages/Signup.jsx";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./store/store.js";
+import Profile from "./pages/Profile.jsx";
+import Cart from "./pages/Cart.jsx";
 
 
 function App() {
@@ -34,7 +36,7 @@ function App() {
           path: "/cart",
           element: (
             <ProtectedRoute>
-              <></>
+              <Cart />
             </ProtectedRoute>
           ),
         },
@@ -42,7 +44,7 @@ function App() {
           path: "/me",
           element: (
             <ProtectedRoute>
-              <></>
+              <Profile/>
             </ProtectedRoute>
           ),
         },

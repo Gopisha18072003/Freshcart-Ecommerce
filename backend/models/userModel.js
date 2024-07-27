@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'User must have a name'],
     },
+    image: {
+        
+    },
     email: {
         type: String,
         required: [true, 'User must have a email address'],

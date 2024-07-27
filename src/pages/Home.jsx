@@ -4,16 +4,15 @@ import { fetchProducts, fetchCategoryCounts } from "../util/http";
 import CircularCarousel from "../ui/CircularCarousel";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addFilter, removeFilter } from "../store/ui-slice";
-import image from '../assets/noProductFound.png'
-import { useEffect } from "react";
+import image from '../assets/noProductFound.png';
 
 
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState(null);
-  const [count, setCount] = useState(0)
+  const {modal} = useSelector(state => state.auth)
   function handleClickCategory(category) {
     setActiveCategory(category);
   }
@@ -32,43 +31,33 @@ export default function HomePage() {
   }
 
   const {
-    data: featuedProducts,
-    isPending: isPendingFeatured,
-    isError: isErrorFeatured,
-    featuredError,
+    data: sampleProducts,
+    isPending: isPendingSample,
+    isError: isErrorSample,
+    sampleError,
   } = useQuery({
-    queryKey: ["products", "featured-products"],
-    queryFn: ({ signal }) => fetchProducts({ signal, type: "featured" }),
+    queryKey: ["products", activeSection],
+    queryFn: ({ signal }) => fetchProducts({ signal, type: activeSection }),
   });
-
+  
   const {
     data: bestSellerProducts,
     isPending: isPendingBestSeller,
     isError: isErrorBestSeller,
     bestSellerError,
   } = useQuery({
-    queryKey: ["products", "bestSeller-products"],
-    queryFn: ({ signal }) => fetchProducts({ signal, type: "bestseller" }),
-  }); 
+    queryKey: ["products", "bestSeller"],
+    queryFn: ({ signal }) => fetchProducts({ signal, type: "bestSeller" }),
+  });
 
 
-   const {
+  const {
     data: categoryProducts,
     isPending: isPendingCategoryProducts,
     isError: isErrorCategoryProducts,
   } = useQuery({
     queryKey: [activeCategory],
     queryFn: ({ signal }) => fetchProducts({ signal, filters: {'category': [activeCategory]} }),
-  });
-
-  const {
-    data: discountedProducts,
-    isPending: isPendingDiscounted,
-    isError: isErrorDiscounted,
-    discountedError,
-  } = useQuery({
-    queryKey: ["products", "discounted-products"],
-    queryFn: ({ signal }) => fetchProducts({ signal, type: "discounted" }),
   });
 
   const dispatch = useDispatch()
@@ -83,6 +72,12 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-12 mt-[8rem]">
+      {modal && (
+        <div className={`absolute z-50 top-[9rem] left-[42%] ${modal.split(' ')[0] == 'Logout'? 'bg-orange-400': 'bg-myGreen-dark'} p-4 poppins-semibold text-white rounded-md`}>
+            {console.log(modal)}
+           {modal}            
+        </div>
+        )}
       <div className="flex justify-between gap-6">
         <div className="flex h-[22rem] items-center bg-white px-3 mt-8 w-[80%] justify-between">
           <div className="">
@@ -609,9 +604,8 @@ export default function HomePage() {
             </li>
           </ul>
         </nav>
-        {isPendingFeatured ||
-          isPendingBestSeller ||
-          (isPendingDiscounted && (
+        {isPendingSample
+          && (
             <div className="flex justify-center items-center h-[20rem]">
               <ProgressSpinner
                 style={{ width: "50px", height: "50px" }}
@@ -620,21 +614,9 @@ export default function HomePage() {
                 animationDuration=".5s"
               />
             </div>
-          ))}
+          )}
 
-        {!isPendingFeatured &&
-          activeSection === "featured" &&
-          featuedProducts && <CircularCarousel avbProducts={featuedProducts} />}
-        {!isPendingBestSeller &&
-          activeSection === "bestSeller" &&
-          bestSellerProducts && (
-            <CircularCarousel avbProducts={bestSellerProducts} />
-          )}
-        {!isPendingDiscounted &&
-          activeSection === "popular" &&
-          discountedProducts && (
-            <CircularCarousel avbProducts={discountedProducts} />
-          )}
+        {!isPendingSample && <CircularCarousel avbProducts={sampleProducts} />}
       </div>
 
       <div className="w-[100%] flex h-[20rem] relative overflow-hidden">
