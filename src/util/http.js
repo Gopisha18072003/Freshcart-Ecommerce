@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+import apiClient from './interseptor'
 
 export const querClient = new QueryClient();
 
@@ -75,6 +76,44 @@ export async function logoutUser() {
     return data;
 }
 
+export const uploadImage = async (id, value, isValid) => {
+    try {
+        const formData = new FormData();
+        formData.append('image', value);
+        if(isValid) {
+            const response = await apiClient.post('/freshcart/user/updateImage', formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+            });
+            if(response.data.status == 'success') {
+
+                return response.data
+            }
+        }
+      } catch (error) {
+        console.error('Error Uploading Image:', error);
+      }
+}
+
+export const updateUserData = async (data) => {
+    try {
+      const response = await apiClient.patch('/freshcart/user/updateMe', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.data.status === 'success') {
+        return response.data.data;
+      } else {
+          console.error('Update failed:', response.data.error);
+        return response.data.error;
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  };
 
 export const fetchCategoryCounts = async () => {
     try {

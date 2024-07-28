@@ -11,6 +11,7 @@ const cors = require('cors');
 const app = express();
 const AppError = require('./utils/appError');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 app.use(helmet());
 app.use(xss());
@@ -41,10 +42,12 @@ const limitter = rateLimiter({
     window: 60*60*1000,
     message: 'Too many requests this IP, please try again later!'
 });
+app.use('/uploads/images', express.static(path.join('uploads', 'images')))
 
 app.use('/api', limitter);
 app.use('/api/v1/freshcart/', groceryRouter);
 app.use('/api/v1/freshcart/user', UserRouter);
+
 
 app.all('*', (req, res, next) => {
     next(new AppError(`Could not find the ${req.originalUrl} route`, 404));

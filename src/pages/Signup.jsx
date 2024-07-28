@@ -46,7 +46,7 @@ export default function Signup() {
       );
       const response = await res.json();
       if (!response.status === "success") {
-        dispatch(signInFailure(data));
+        dispatch(signInFailure({data: data,error: 'Email already exists' }));
         setTimeout(() => dispatch(clearModal()), 3000);
         return;
       }
@@ -54,7 +54,7 @@ export default function Signup() {
       setTimeout(() => dispatch(clearModal()), 3000);
       navigate("/");
     } catch (error) {
-      dispatch(signInFailure(error));
+      dispatch(signInFailure({data: data,error: 'Email already exists' }));
       setTimeout(() => dispatch(clearModal()), 3000)
     }
   }
@@ -119,7 +119,9 @@ export default function Signup() {
               </p>
             </div>
           </div>
-
+          {
+            modal && <span className="text-red-500 poppins-regular">{modal}</span>
+          }
           <form
                   onSubmit={handleSubmit}>
             <div className="signupForm mb-6 max-h-56 overflow-y-scroll text-left scrollable pr-2">

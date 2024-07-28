@@ -1,39 +1,103 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useMutation } from '@tanstack/react-query';
+import { useDispatch, useSelector } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import { clearModal, signOut } from "../store/auth-slice";
-import { logoutUser } from "../util/http";
+import { clearModal, signOut, updateCurrentUser } from "../store/auth-slice";
+import { logoutUser, updateUserData } from "../util/http";
+import ImageUpload from "../components/ImageUpload";
+import { uploadImage } from "../util/http";
+import Input from "../components/Input";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 export default function Profile() {
-    const [selectedAction, setSelectedAction] = useState('profile')
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const { name, email, address, image, pincode } = currentUser;
+  const [selectedAction, setSelectedAction] = useState("profile");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [modal, setModal] = useState(null);
 
-    const {mutate} = useMutation(
-      {mutationFn: logoutUser, 
-      onSuccess: (data) => {
-        dispatch(signOut())
-        setTimeout(() => dispatch(clearModal()), 3000)
-        navigate('/')
-      },
-      onError: (error) => {
-        console.error('Logout failed', error);
-      },
-    });
+  const { mutate } = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: (data) => {
+      dispatch(signOut());
+      setTimeout(() => dispatch(clearModal()), 3000);
+      navigate("/");
+    },
+    onError: (error) => {
+      console.error("Logout failed", error);
+    },
+  });
 
-    
-      function handleChaneAction(action) {
-        if(action == 'logout')
-          mutate();
-        setSelectedAction(action)
+  function handleChaneAction(action) {
+    if (action == "logout") mutate();
+    setSelectedAction(action);
+  }
+  const [isEmailValid, setIsEmailValid] = useState(true);
+
+  function handleEmailChange(event) {
+    const email = event.target.value;
+    if (email == "") {
+      setIsEmailValid(null);
+    } else if (email.includes("@") && email.endsWith(".com")) {
+      setIsEmailValid(true);
+    } else if (
+      (email != "" && !email.includes("@")) ||
+      !email.endsWith(".com")
+    ) {
+      setIsEmailValid(false);
     }
+  }
+
+  const {
+    mutate: mutateUser,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: updateUserData,
+    onSuccess: (data) => {
+      dispatch(updateCurrentUser(data.user));
+      setModal({ type: "success", message: "Updated Successfully" });
+      setTimeout(() => setModal(null), 3000);
+    },
+    onError: () => {
+      setModal({ type: "fail", message: "Updation Failed" });
+      setTimeout(() => setModal(null), 3000);
+    },
+  });
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    data["name"] = `${data["firstName"]} ${data["lastName"]}`;
+    mutateUser(JSON.stringify(data));
+  }
+
   return (
     <div className="w-full h-[44rem] bg-gray-100 flex items-center justify-center">
+      {modal && (
+        <span
+          className={`z-50 absolute top-[12rem] left-[38rem] poppins-semibold ${
+            modal.type == "success" ? "bg-myGreen-light" : "bg-orange-400"
+          } text-white p-4 rounded-md`}
+        >
+          {modal.message}
+        </span>
+      )}
       <div className="w-[80%] h-[26rem] bg-white mt-[6rem] mb-2 rounded-3xl flex">
-        <aside className="border-r-4 border-gray-300 w-[30%]" id='navBarProfile'>
+        <aside
+          className="border-r-4 border-gray-300 w-[30%]"
+          id="navBarProfile"
+        >
           <ul className="flex flex-col justify-center h-full  gap-0 poppins-regular tracking-wide">
-            <li onClick={() => handleChaneAction('profile')} className={`flex gap-2 ${selectedAction == 'profile' ? 'active': ''} py-4 pl-8 cursor-pointer`}>
+            <li
+              onClick={() => handleChaneAction("profile")}
+              className={`flex gap-2 ${
+                selectedAction == "profile" ? "active" : ""
+              } py-4 pl-8 cursor-pointer`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -49,9 +113,14 @@ export default function Profile() {
                 />
               </svg>
 
-              <span>Profile</span>
+              <span>Edit Profile</span>
             </li>
-            <li onClick={() => handleChaneAction('orders')} className={`flex gap-2 ${selectedAction == 'orders' ? 'active': ''} py-4 pl-8 cursor-pointer`}>
+            <li
+              onClick={() => handleChaneAction("orders")}
+              className={`flex gap-2 ${
+                selectedAction == "orders" ? "active" : ""
+              } py-4 pl-8 cursor-pointer`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -69,7 +138,12 @@ export default function Profile() {
 
               <span>Orders</span>
             </li>
-            <li onClick={() => handleChaneAction('wishlist')} className={`flex gap-2 ${selectedAction == 'wishlist' ? 'active': ''} py-4 pl-8 cursor-pointer`}>
+            <li
+              onClick={() => handleChaneAction("wishlist")}
+              className={`flex gap-2 ${
+                selectedAction == "wishlist" ? "active" : ""
+              } py-4 pl-8 cursor-pointer`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -87,7 +161,12 @@ export default function Profile() {
 
               <span>Wishlist</span>
             </li>
-            <li onClick={() => handleChaneAction('notification')} className={`flex gap-2 ${selectedAction == 'notification' ? 'active': ''} py-4 pl-8 cursor-pointer`}>
+            <li
+              onClick={() => handleChaneAction("notification")}
+              className={`flex gap-2 ${
+                selectedAction == "notification" ? "active" : ""
+              } py-4 pl-8 cursor-pointer`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -105,7 +184,35 @@ export default function Profile() {
 
               <span>Notifications</span>
             </li>
-            <li onClick={() => handleChaneAction('logout')} className={`flex gap-2 ${selectedAction == 'logout' ? 'active': ''} py-4 pl-8 cursor-pointer`}>
+            <li
+              onClick={() => handleChaneAction("security")}
+              className={`flex gap-2 ${
+                selectedAction == "security" ? "active" : ""
+              } py-4 pl-8 cursor-pointer`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+                />
+              </svg>
+
+              <span>Security</span>
+            </li>
+            <li
+              onClick={() => handleChaneAction("logout")}
+              className={`flex gap-2 ${
+                selectedAction == "logout" ? "active" : ""
+              } py-4 pl-8 cursor-pointer`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -121,11 +228,92 @@ export default function Profile() {
                 />
               </svg>
 
-              <span >Logout</span>
+              <span>Logout</span>
             </li>
           </ul>
         </aside>
-        <main className="w-[70%]"></main>
+        <main className="w-[70%] px-12 py-12 overflow-y-scroll">
+          <div className="w-[8rem] mx-auto">
+            <img
+              src={`http://127.0.0.1:8000/${image}`}
+              alt="profile photo"
+              crossOrigin="anonymous"
+              className="w-[8rem] h-[8rem] rounded-full relative object-cover"
+            />
+
+            <ImageUpload id="image" onInput={uploadImage} />
+          </div>
+
+          <div>
+            <form
+              action=""
+              className="flex flex-col items-start gap-4"
+              onSubmit={handleFormSubmit}
+            >
+              <div className="flex gap-10 justify-center">
+                <Input
+                  label="First Name"
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={name.split(" ")[0]}
+                  required={true}
+                />
+                <Input
+                  label="Last Name"
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={name.split(" ")[1]}
+                  required={true}
+                />
+              </div>
+              <Input
+                name="email"
+                label="Email"
+                type="email"
+                value={email}
+                className={`w-[15rem] ${
+                  isEmailValid == true
+                    ? "border-myGreen-dark"
+                    : "border-red-600"
+                } outline-none`}
+                id="email"
+                onChange={handleEmailChange}
+                required={true}
+              />
+              <Input
+                label="Address"
+                type="text"
+                id="address"
+                name="address"
+                className="w-[20rem]"
+                value={address}
+                placeholder="East college para, Raniganj"
+              />
+              <Input
+                label="Pincode"
+                type="Number"
+                id="pincode"
+                name="pincode"
+                length="7"
+                className="w-24"
+                value={pincode}
+                placeholder="713347"
+              />
+              <button
+                className="outline-none p-2 bg-orange-500 rounded-md poppins-semibold text-white mx-auto disabled:bg-gray-500 w-[6rem] h-[3rem]"
+                disabled={!isEmailValid}
+              >
+                {isPending ? (
+                  <ProgressSpinner className="size-8" strokeWidth="8" />
+                ) : (
+                  "Update"
+                )}
+              </button>
+            </form>
+          </div>
+        </main>
       </div>
     </div>
   );

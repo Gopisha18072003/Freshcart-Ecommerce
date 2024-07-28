@@ -91,7 +91,7 @@ export default function HomePage() {
               Assertively target market-driven intellectual capital with
               worldwide human capital holistic
             </p>
-            <Link className="bg-myGreen-dark px-4 py-4 flex gap-4 poppins-bold text-white rounded-md mt-6 w-[10rem] shopNow" to='/shop' >
+            <Link className="custom-button bg-myGreen-dark px-4 py-4 flex gap-4 poppins-bold text-white rounded-md mt-6 w-[10rem] shopNow" to='/shop' >
               Shop Now
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +124,7 @@ export default function HomePage() {
             Organic Foods Up
           </h3>
           <h3 className="poppins-semibold text-2xl text-white">To 50% off</h3>
-          <button className="flex bg-orange-500 w-1/2 poppins-medium text-md text-white px-2 py-2 gap-2 rounded-md mt-6 items-center" onClick={() => handleShopNow({'isOrganic': true})}>
+          <button className="custom-button flex bg-orange-500 w-1/2 poppins-medium text-md text-white px-2 py-2 gap-2 rounded-md mt-6 items-center" onClick={() => handleShopNow({'isOrganic': true})}>
             Shop Now
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -513,7 +513,7 @@ export default function HomePage() {
         <div className="w-[30%] section1 flex flex-col gap-4 p-8">
           <p className="lobster-regular text-myGreen-dark">Enjoy up to 20%</p>
           <h3 className="poppins-bold text-2xl">Fresh Vegetables</h3>
-          <button className="flex gap-1 bg-myGreen-dark w-[7rem] text-white poppins-semibold items-center p-2 rounded-md text-sm justify-center" onClick={() => handleShopNow({'category': ['vegetables']})}>
+          <button className="custom-button flex gap-1 bg-myGreen-dark w-[7rem] text-white poppins-semibold items-center p-2 rounded-md text-sm justify-center" onClick={() => handleShopNow({'category': ['vegetables']})}>
             Shop Now
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -543,7 +543,7 @@ export default function HomePage() {
             <p className="text-gray-400 poppins-regular text-sm">
               Progressive models functionalized supply chains
             </p>
-            <button className="text-white bg-orange-500 rounded-md flex gap-2 poppins-semibold text-sm p-3 w-[8rem] items-center" onClick={() => handleShopNow({})}>
+            <button className="custom-button text-white bg-orange-500 rounded-md flex gap-2 poppins-semibold text-sm p-3 w-[8rem] items-center" onClick={() => handleShopNow({})}>
               Shop Now
               <svg
                 xmlns="http://www.w3.org/2000/svg"

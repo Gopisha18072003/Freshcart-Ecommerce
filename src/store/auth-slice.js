@@ -20,10 +20,13 @@ const userSlice = createSlice({
       state.error = false;
       state.modal = 'Login Successfully!'
     },
+    updateCurrentUser: (state, action) => {
+      state.currentUser = {...state.currentUser, ...action.payload}
+    },
     signInFailure: (state, action) => {
       state.loading = false;
-      state.error = action.payload;
-      state.modal = 'Invalid Username or Password'
+      state.error = action.payload.data;
+      state.modal = action.payload.error ||  'Invalid Username or Password'
     },
     updateUserStart: (state) => {
       state.loading = true;
@@ -72,7 +75,8 @@ export const {
   deleteUserStart,
   deleteUserSuccess,
   signOut,
-  clearModal
+  clearModal,
+  updateCurrentUser
 } = userSlice.actions;
 
 export default userSlice.reducer;

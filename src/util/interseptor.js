@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { refreshAccessToken } from './authService'; // Your token refresh function
+import { refreshAccessToken } from './authServices'; // Your token refresh function
 
 const apiClient = axios.create({
   baseURL: 'http://127.0.0.1:8000/api/v1',
+  withCredentials: true
 });
 
 apiClient.interceptors.request.use(

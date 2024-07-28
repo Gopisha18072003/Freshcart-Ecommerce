@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
         required: [true, 'User must have a name'],
     },
     image: {
-        
+        type: String,
+        default: 'uploads\\images\\dummy.png'
     },
     email: {
         type: String,
@@ -58,7 +59,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
-    }
+    },
 
 }, {timestamps: true});
 
@@ -92,6 +93,20 @@ userSchema.methods.isPasswordChanged = function(JWTTimestamp) {
     }
     return false;
 }
+
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+    if (this.passwordChangedAt) {
+      const changedTimestamp = parseInt(
+        this.passwordChangedAt.getTime() / 1000,
+        10
+      );
+  
+      return JWTTimestamp < changedTimestamp;
+    }
+  
+    // False means NOT changed
+    return false;
+  };
 
 userSchema.methods.createPasswordResetToken =  function() {
     const resetToken = crypto.randomBytes(32).toString('hex');

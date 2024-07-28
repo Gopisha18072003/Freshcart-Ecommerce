@@ -106,32 +106,73 @@ exports.refresh = catchAsync(async (req, res) => {
   });
 })
 
-exports.protect = catchAsync( async (req, res, next) => {
-    let token;
-    if(req.cookie.jwt) {
-        token = req.cookie.jwt
-    }
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1) Getting token and check of it's there
+  let token;
+  
+  if (
+    req.headers.Authorization &&
+    req.headers.Authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.Authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
 
-    if(!token) {
-        return next(
-            new AppError('You are not Logged in')
-        )
-    }
+  if (!token) {
+    return next(
+      new AppError('You are not logged in! Please log in to get access.', 401)
+    );
+  }
 
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  // 2) Verification token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    const freshUser = await User.findById(decoded.id);
-    if(!freshUser) {
-        return next(
-            new AppError('Invalid token', 400)
-        )
-    }
-    if(freshUser.isPasswordChanged(decoded.iat)) {
-        return next(new AppError("User has recently changed the password"))
-    }
-    req.user = freshUser;
-    next();
-}) 
+  // 3) Check if user still exists
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(
+      new AppError(
+        'The user belonging to this token does no longer exist.',
+        401
+      )
+    );
+  }
+
+  // 4) Check if user changed password after the token was issued
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError('User recently changed password! Please log in again.', 401)
+    );
+  }
+
+  // GRANT ACCESS TO PROTECTED ROUTE
+  req.user = currentUser;
+  res.locals.user = currentUser;
+  next();
+});
+
+exports.uploadImage = catchAsync(async (req, res, next) => {
+  if (!req.file) {
+    return new AppError('No file uploaded!', 400);
+  }
+
+  const userId = req.user.id; 
+  const imagePath = req.file.path;
+
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { image: imagePath },
+    { new: true, runValidators: true }
+  );
+
+  if (!user) {
+    return next(new AppError('User not found!', 404));
+  }
+
+  res.status(200).json({ status: 'success', data: {'image': req.file.path}});
+})
+
 
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {

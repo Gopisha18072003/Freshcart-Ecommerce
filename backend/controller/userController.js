@@ -38,6 +38,38 @@ exports.getUser = catchAsync(async (req, res, next) => {
 
 });
 
+exports.updateUser = catchAsync(async (req, res, next) => {
+    const {name, email, address, pincode} = req.body;
+    const userId = req.user.id; 
+    if(email && name) {
+        const data = {'name': name, 'email': email, 'address': address, 'pincode': pincode}
+        const user = await User.findByIdAndUpdate(userId, data,
+            { new: true, runValidators: true });
+        res.status(200).json({
+            status: 'success',
+            data: {user}
+        });
+    }
+    else {
+        res.status(400).json({
+            status: 'fail',
+            error: {message: 'Email or Name is invalid'}
+        });
+    }
+   
+    
+
+});
+
+exports.deleteUser = catchAsync(async (req, res, next) => {
+    const users = await User.findByIdAndDelete(req.user.id);
+    res.status(200).json({
+        status: 'success',
+        data: {users}
+    });
+
+});
+
 exports.updateOrderHistory = catchAsync(async (req, res, next) => {
     const orderData = req.body.cart;
     const user = req.user;

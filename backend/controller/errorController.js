@@ -1,7 +1,13 @@
+const fs = require('fs')
 module.exports = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error'
     console.log(err);
+    if(req.file) {
+        fs.unlink(req.file.path, err => {
+            console.log(err);
+        })
+    }
     if(err.name == 'CastError'){
         res.status(404).json({
             status: 'fail',

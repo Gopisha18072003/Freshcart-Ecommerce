@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { refreshAccessToken } from "../util/authServices";
 //import { logout, updateToken } from "../store/auth-slice";
 import { signOut } from "../store/auth-slice";
-import image from '../assets/dummy.png';
 
 export default function MainNavigation({ products, classes }) {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -172,7 +171,7 @@ export default function MainNavigation({ products, classes }) {
               </div>
 
               <div className="w-10 h-10 cursor-pointer" onClick={() => handleClickNavigate('me')}>
-                <img src={image} alt="Profile Image" className="w-full h-full rounded-full"/>
+                <img src={`http://127.0.0.1:8000/${user.image}`} alt="Profile Image" className="w-full h-full rounded-full object-cover" crossOrigin="anonymous"/>
               </div>
             </div>
           )}
