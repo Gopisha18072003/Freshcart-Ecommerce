@@ -42,6 +42,7 @@ export default function Card({data:product}) {
                   product.price -
                   (product.price * product.discount) / 100
                 ).toFixed(2)}
+                
               </span>
               <span className="poppins-semibold text-lg bg-myGreen-dark text-white w-[4rem] h-[4rem] block rounded-full text-center p-2 absolute top-[-0.4rem] left-[-0.5rem]">
                 {" "}
@@ -49,8 +50,9 @@ export default function Card({data:product}) {
               </span>
             </>
           ) : (
-            <span>${product.price.toFixed(2)}</span>
+            <span>${product.price.toFixed(2)}</span> 
           )}
+          <span className="text-sm poppins-regular text-gray-400 ml-1">{product.parameter}</span>
         </h6>
         <div className="flex justify-center gap-2 mb-4">
           <Rating value={product.averageRating} readOnly cancel={false} />

@@ -115,6 +115,26 @@ export const updateUserData = async (data) => {
     }
   };
 
+export const resetPassword = async (data) => {
+  try {
+    const response = await apiClient.patch('/freshcart/user/updatepassword', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.data.status === 'success') {
+      return response.data;
+    } else {
+        console.error('Reset failed:', response.data.error);
+        throw new Error('Incorrect Password, Try again!');
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    throw error;
+  }
+}
+
 export const fetchCategoryCounts = async () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/api/v1/freshcart/category');

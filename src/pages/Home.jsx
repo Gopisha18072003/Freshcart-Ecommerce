@@ -612,6 +612,7 @@ export default function HomePage() {
                 strokeWidth="8"
                 fill="white"
                 animationDuration=".5s"
+                className="custom-spinner"
               />
             </div>
           )}
