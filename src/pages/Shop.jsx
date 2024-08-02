@@ -7,8 +7,6 @@ import FilterTab from "../ui/FilterTab";
 import { useDispatch, useSelector } from "react-redux";
 import { addSortBy } from "../store/ui-slice";
 import { useState } from "react";
-import discountVideo from "./assets/video3.mp4";
-import bannerImage from './assets/banner.png'
 
 export default function ShopPage() {
   const [searchParams, setSearchParans] = useSearchParams();
@@ -34,7 +32,7 @@ export default function ShopPage() {
     <>
       <div>
         <video
-          src={discountVideo}
+          src="./assets/video3.mp4"
           className="mt-[10rem] h-[28rem] w-full object-cover"
           autoPlay
           loop
@@ -89,14 +87,14 @@ export default function ShopPage() {
             )}
             {!isPending && products.length < 1 && (
               <div className="h-screen w-full flex flex-col justify-center items-center bg-white">
-                <img src={image} alt="" className="w-[50%] " />
+                <img src='./assets/noProductFound.png' alt="" className="w-[50%] " />
                 <h1 className="poppins-bold text-xl">No Products Found</h1>
               </div>
             )}
           </main>
         </div>
       </div>
-      <img src="./assets/noProductFound.png" alt="" className="h-[20rem] object-cover w-full mb-16"/>
+      <img src="./assets/banner.png" alt="" className="h-[20rem] object-cover w-full mb-16"/>
     </>
   );
 }
