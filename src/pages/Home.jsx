@@ -6,7 +6,6 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addFilter, removeFilter } from "../store/ui-slice";
-import image from './assets/noProductFound.png';
 import heroVideo from './assets/fruits fresh.mp4';
 import bestDeals from './assets/video1.mp4';
 
@@ -495,7 +494,7 @@ export default function HomePage() {
           {
             !isPendingCategoryProducts && categoryProducts.length == 0 && activeCategory && (
               <div className="w-full bg-white mt-8 flex flex-col justify-center items-center">
-                <img src={image} className="h-[24rem] w-[32rem]"/>
+                <img src='./assets/noProductFound.png' className="h-[24rem] w-[32rem]"/>
                 <p className="py-4 poppins-bold text-xl">No products found</p>
               </div>
             )

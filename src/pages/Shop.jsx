@@ -3,10 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import { fetchProducts } from "../util/http";
 import { ProgressSpinner } from "primereact/progressspinner";
 import Card from "../ui/Card";
-import { categories } from "../App";
 import FilterTab from "../ui/FilterTab";
 import { useDispatch, useSelector } from "react-redux";
-import image from "./assets/noProductFound.png";
 import { addSortBy } from "../store/ui-slice";
 import { useState } from "react";
 import discountVideo from "./assets/video3.mp4";
@@ -98,7 +96,7 @@ export default function ShopPage() {
           </main>
         </div>
       </div>
-      <img src={bannerImage} alt="" className="h-[20rem] object-cover w-full mb-16"/>
+      <img src="./assets/noProductFound.png" alt="" className="h-[20rem] object-cover w-full mb-16"/>
     </>
   );
 }
