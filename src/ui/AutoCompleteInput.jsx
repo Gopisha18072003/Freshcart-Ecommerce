@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
 
-export default function AutoCompleteInput({ products, category, className }) {
-  const [selectedProduct, setSelectedProduct] = useState(null);
+export default function AutoCompleteInput({ products, category, className, selectedProduct, setSelectedProduct }) {
+
   const [filteredProducts, setFilteredProducts] = useState(null);
   let avbProducts = products;
 

@@ -20,6 +20,9 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./store/store.js";
 import Profile from "./pages/Profile.jsx";
 import Cart from "./pages/Cart.jsx";
+import Product from "./pages/Product.jsx";
+import Success from "./pages/Success.jsx";
+import Cancel from "./pages/Cancel.jsx";
 
 
 function App() {
@@ -41,6 +44,18 @@ function App() {
           ),
         },
         {
+          path: "/success",
+          element: (
+              <Success />
+          ),
+        },
+        {
+          path: "/cancel",
+          element: (
+              <Cancel/>
+          ),
+        },
+        {
           path: "/me",
           element: (
             <ProtectedRoute>
@@ -48,6 +63,11 @@ function App() {
             </ProtectedRoute>
           ),
         },
+        {
+          path: '/product/:productId',
+          element: <Product />,
+          errorElement: <ErrorPage text="No Product Found" />
+        }
       ],
     },
     {
@@ -59,6 +79,7 @@ function App() {
       element: <Signup />,
       action: signupAction,
     },
+    
   ]);
   return (
     <Provider store={store}>

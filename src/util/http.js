@@ -30,8 +30,7 @@ export async function fetchProducts({signal, type, filters, sortBy}) {
         }
     if(sortBy) {
         url += `sort=${sortBy}`
-    }
-        
+    }   
     }
     const response = await fetch(url, {signal: signal});
     if(!response.ok) {
@@ -42,6 +41,40 @@ export async function fetchProducts({signal, type, filters, sortBy}) {
     }
     const {data} = await response.json();
     return data.groceries;
+}
+
+export async function fetchProduct({signal, query}) {
+  let url = 'http://127.0.0.1:8000/api/v1/freshcart/';
+  const {productId} = query;
+  if(productId !== '') {
+    url += `${productId}` 
+  }
+  const response = await fetch(url, {signal: signal});
+    if(!response.ok) {
+        const error = new Error('An error has occured!');
+        error.code = response.status;
+        error.info = await response.json()
+        throw error;
+    }
+    const {data} = await response.json();
+    return data.grocery;
+}
+
+export async function fetchReviews({signal, query}) {
+  let url = 'http://127.0.0.1:8000/api/v1/freshcart/';
+  const {productId} = query;
+  if(productId !== '') {
+    url += `${productId}/reviews` 
+  }
+  const response = await fetch(url, {signal: signal});
+    if(!response.ok) {
+        const error = new Error('An error has occured!');
+        error.code = response.status;
+        error.info = await response.json()
+        throw error;
+    }
+    const {data} = await response.json();
+    return data.reviews;
 }
 
 export async function loginUser(userData) {
@@ -114,6 +147,69 @@ export const updateUserData = async (data) => {
       console.error('An error occurred:', error);
     }
   };
+
+  export const createCart = async () => {
+    try {
+      const response = await apiClient.post('/freshcart/user/createCart')
+      if(response.data.status == 'success')
+        return response.data.data;
+      else {
+        console.log("Cart Creation Failed")
+        return response.data.message
+      }
+    } catch (error) {
+      console.log('An error occurred:', error)
+    }
+  }
+
+  export const updateCart = async (data) => {
+    try {
+      const response = await apiClient.patch('/freshcart/user/updateCart', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      if(response.data.status == 'success')
+        return response.data.data
+      else {
+        console.log('Cart Updation Failed')
+        response.data.messsage
+      }
+    }catch(error) {
+      console.log('Updation Failed')
+    }
+  }  
+  
+  export const getCart = async (data) => {
+    try {
+      const response = await apiClient.get('/freshcart/user/getCart');
+      if(response.data.status == 'success')
+        return response.data.data
+      else {
+        console.log('Getting cart data failed')
+        response.data.messsage
+      }
+    }catch(error) {
+      console.log('Getting cart data failed')
+    }
+  }
+
+  export const deleteCart = async (data) => {
+    try {
+      const response = await apiClient.get('/freshcart/user/deleteCart');
+      if(response.data.status == 'success')
+        return response.data.data
+      else {
+        console.log('Cart Deletion Failed')
+        response.data.messsage
+      }
+
+    } catch(error) {
+      console.log('Cart deletion failed')
+    }
+  }
+
+  
 
 export const resetPassword = async (data) => {
   try {

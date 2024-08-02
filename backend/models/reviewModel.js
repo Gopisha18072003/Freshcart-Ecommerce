@@ -11,24 +11,21 @@ const reviewSchema = new mongoose.Schema(
       type: "String",
       required: [true, "comment is required"],
     },
-    createdAt: {
-      type: Date,
-      default: Date.now(),
-    },
-    item: {
+    product: {
       type: mongoose.Schema.ObjectId,
       ref: "groceryItems",
       required: [true, "Id of item is required"],
     },
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: "Users",
+      ref: "User",
       required: [true, "Id of user is required"],
     },
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    timestamps: true
   }
 );
 
@@ -37,7 +34,7 @@ reviewSchema.indexes({item: 1, user: 1}, {unique: true});
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
-    select: "name",
+    select: "name image",
   });
   next();
 });

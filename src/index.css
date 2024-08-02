@@ -408,3 +408,19 @@
   color: #4caf50;
   font-weight: 600;
 }
+
+/* Hide the spinner controls for all number inputs */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.custom-carousel .p-carousel-next,
+.custom-carousel .p-carousel-prev {
+  display: none;
+}
+
+.custom-carousel .p-carousel-content {
+  scroll-behavior: smooth !important;
+}

@@ -61,7 +61,7 @@ export default function CircularCarousel({ avbProducts, max }) {
         numVisible={3}
         numScroll={3}
         responsiveOptions={responsiveOptions}
-        className="custom-carousel mt-12"
+        className=" mt-12"
         circular
         autoplayInterval={3000}
         itemTemplate={productTemplate}

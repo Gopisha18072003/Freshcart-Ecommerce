@@ -7,7 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addFilter, removeFilter } from "../store/ui-slice";
 import image from '../assets/noProductFound.png';
-
+import heroVideo from '../assets/fruits fresh.mp4';
+import bestDeals from '../assets/video1.mp4';
 
 
 export default function HomePage() {
@@ -143,7 +144,7 @@ export default function HomePage() {
           </button>
         </div>
       </div>
-
+      <video src={heroVideo} autoPlay loop muted></video>
       <div className="flex flex-col justify-center">
         <h1 className="text-center poppins-bold text-3xl">
           Browse All Categories
@@ -620,8 +621,8 @@ export default function HomePage() {
         {!isPendingSample && <CircularCarousel avbProducts={sampleProducts} />}
       </div>
 
-      <div className="w-[100%] flex h-[20rem] relative overflow-hidden">
-        <section className=" w-[30%] image-background2"></section>
+      <div className="w-[100%] flex h-[40rem] relative overflow-hidden">
+        {/* <section className=" w-[30%] image-background2"></section>
         <section className="w-[70%] solid-background2 pl-12 flex flex-col gap-6 justify-center items-center">
           <h2 className="text-white poppins-bold text-2xl ">
             Best Deals<span className="text-orange-500 poppins-semibold border-b-2 border-orange-500"> This Week</span>
@@ -632,7 +633,8 @@ export default function HomePage() {
 
         </section>
         <div className="absolute right-[-14rem] top-[-2rem] z-10 rounded-full w-[30rem] h-[30rem] overflow-hidden" id='circle'>
-        </div>
+        </div> */}
+        <video src={bestDeals} autoPlay loop muted className="w-full h-full object-cover"></video>
       </div>
 
       <div className="flex relative justify-center h-[20rem]  mb-[5em]">

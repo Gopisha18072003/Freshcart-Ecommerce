@@ -2,16 +2,19 @@ import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import AutoCompleteInput from "../ui/AutoCompleteInput";
 import { categories } from "../App";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, redirect, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { refreshAccessToken } from "../util/authServices";
 //import { logout, updateToken } from "../store/auth-slice";
 import { signOut } from "../store/auth-slice";
+import { getCart, updateCart } from "../util/http";
+import { setCartData } from "../store/cart-slice";
 
 export default function MainNavigation({ products, classes }) {
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const cartData = useSelector((state) => state.cart.items);
+  const cartData = useSelector((state) => state.cart);
   const user = useSelector((state) => state.auth.currentUser);
 
   const dispatch = useDispatch();
@@ -25,6 +28,19 @@ export default function MainNavigation({ products, classes }) {
   }
 
   useEffect(() => {
+    const addCartData = async () => {
+      const response = await getCart();
+      if(response.items.length > 0) {
+        const cartItems = response.items
+        const total = response.total
+        dispatch(setCartData({items: cartItems, total}))
+      }
+      
+    }
+    addCartData()
+  }, [dispatch])
+
+  useEffect(() => {
     const validateToken = async () => {
       if (user) {
         const response = await refreshAccessToken();
@@ -36,8 +52,29 @@ export default function MainNavigation({ products, classes }) {
     validateToken();
   }, [user, dispatch]);
 
+  useEffect(() => {
+    const updateCartDatabase = async () => {
+      const data = JSON.stringify(cartData)
+      const response = await updateCart(data);
+    };
+    updateCartDatabase();
+  }, [cartData]);
+
+  const [validSearch, setValidSearch] = useState(false)
+
+  useEffect(() => {
+    if(typeof selectedProduct === 'object' && selectedProduct !== null) {
+      setValidSearch(true)
+    }
+  }, [selectedProduct])
+
+  function handleSearchProduct() {
+    const productId = selectedProduct['_id']
+    navigate(`/product/${productId}`)
+  }
+
   return (
-    <div className={`bg-white pt-4 px-8 ${classes} w-full z-10 pb-8`}>
+    <div className={`bg-white pt-4 px-8 ${classes} w-full z-10 pb-8 border-b-4 border-gray-200`}>
       <div className="flex justify-between items-center">
         <h1 className="poppins-bold text-2xl">Freshcart</h1>
         <div id="search-bar" className="flex items-center ">
@@ -54,8 +91,10 @@ export default function MainNavigation({ products, classes }) {
               products={products}
               category={selectedCategory}
               className="my-custom-autocomplete poppins-medium border-2 border-black"
+              selectedProduct={selectedProduct}
+              setSelectedProduct={setSelectedProduct}
             />
-            <button className="bg-orange-400 px-2.5 py-2.5 flex poppins-medium text-white gap-2 rounded-e-md">
+            <button className="bg-orange-400 px-2.5 py-2.5 flex poppins-medium text-white gap-2 rounded-e-md disabled:bg-gray-400" disabled={!validSearch} onClick={handleSearchProduct}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -146,12 +185,15 @@ export default function MainNavigation({ products, classes }) {
         </nav>
 
         <div className="flex items-center gap-4 relative">
-          {cartData.length > 0 && (
-            <div className="w-5 h-5 rounded-full text-white bg-orange-600 text-center flex justify-center items-center absolute top-0 left-[-4px]">
-              <span className="block">{cartData.length}</span>
-            </div>
-          )}
+          
           {user && (
+            <div>
+            {cartData.items.length > 0 && (
+              <div className="w-5 h-5 rounded-full text-white bg-orange-600 text-center flex justify-center items-center absolute top-0 left-[-4px]">
+                
+                <span className="block">{cartData.items.length}</span>
+              </div>
+            )}
             <div className="flex gap-8">
               <div className="w-10 h-10 cursor-pointer" onClick={() => handleClickNavigate('cart')}>
                 <svg
@@ -173,6 +215,7 @@ export default function MainNavigation({ products, classes }) {
               <div className="w-10 h-10 cursor-pointer" onClick={() => handleClickNavigate('me')}>
                 <img src={`http://127.0.0.1:8000/${user.image}`} alt="Profile Image" className="w-full h-full rounded-full object-cover" crossOrigin="anonymous"/>
               </div>
+            </div>
             </div>
           )}
           {!user && (

@@ -1,7 +1,6 @@
 import { Link, redirect } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { Form } from "react-router-dom";
 import {
   faEye,
   faEyeSlash,
@@ -19,6 +18,7 @@ import {
   signInFailure,
   clearModal,
 } from "../store/auth-slice";
+import { createCart } from "../util/http";
 
 export default function Signup() {
 
@@ -51,6 +51,7 @@ export default function Signup() {
         return;
       }
       dispatch(signInSuccess(response.data.user));
+      await createCart()
       setTimeout(() => dispatch(clearModal()), 3000);
       navigate("/");
     } catch (error) {

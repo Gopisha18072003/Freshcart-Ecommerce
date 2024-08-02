@@ -4,7 +4,7 @@ import { faFacebook, faInstagram, faLinkedin, faGithub } from "@fortawesome/free
 
 export default function Footer() {
   return <>
-  <div className="h-[200px] md:mx-12 p-4 mx-8 flex md:gap-4 text-start lg:gap-24 justify-center gap-1 poppins-regular">
+  <div className="h-[200px] w-full md:px-12 p-4 px-8 flex md:gap-4 text-start lg:gap-24 justify-center gap-1 poppins-regular border-t-4 border-gray-200">
     <div>
         <h1 className="text-myGreen-dark md:text-md lg:text-xl border-b-2 border-myGreen-dark text-start mb-2 font-bold text-[0.7rem]">Quick Links</h1>
         <ul className="text-black flex flex-col gap-1 items-start md:text-sm text-[0.6rem]">
