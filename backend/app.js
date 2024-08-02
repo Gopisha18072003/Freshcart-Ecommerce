@@ -102,7 +102,9 @@ app.post('/api/v1/freshcart/create-checkout-session', async (req, res) => {
 })
 app.use('/api/v1/freshcart/user', UserRouter);
 
-
+app.get('/', (req, res) => {
+    res.send('Welcome to the Freshcart API!');
+});
 app.all('*', (req, res, next) => {
     next(new AppError(`Could not find the ${req.originalUrl} route`, 404));
 })
