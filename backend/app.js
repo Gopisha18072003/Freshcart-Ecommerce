@@ -23,7 +23,7 @@ app.use(mongoSanitize());
 app.use(cors({ 
     origin: '*',
     credentials: true,
-    sameSite: 'Strict',
+    sameSite: 'None',
 }));
 app.use(cookieParser());
 app.use(hpp({
