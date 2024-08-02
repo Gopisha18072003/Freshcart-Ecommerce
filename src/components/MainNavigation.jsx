@@ -213,7 +213,7 @@ export default function MainNavigation({ products, classes }) {
               </div>
 
               <div className="w-10 h-10 cursor-pointer" onClick={() => handleClickNavigate('me')}>
-                <img src={`http://127.0.0.1:8000/${user.image}`} alt="Profile Image" className="w-full h-full rounded-full object-cover" crossOrigin="anonymous"/>
+                <img src={`https://freshcart-ut38.onrender.com/${user.image}`} alt="Profile Image" className="w-full h-full rounded-full object-cover" crossOrigin="anonymous"/>
               </div>
             </div>
             </div>

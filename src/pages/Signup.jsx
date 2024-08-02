@@ -34,7 +34,7 @@ export default function Signup() {
     try {
       dispatch(signInStart());
       const res = await fetch(
-        "http://127.0.0.1:8000/api/v1/freshcart/user/signup",
+        "https://freshcart-ut38.onrender.com/api/v1/freshcart/user/signup",
         {
           method: "POST",
           credentials: "include",

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { refreshAccessToken } from './authServices'; // Your token refresh function
 
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/v1',
+  baseURL: 'https://freshcart-ut38.onrender.com/api/v1',
   withCredentials: true
 });
 

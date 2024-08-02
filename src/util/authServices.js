@@ -1,5 +1,5 @@
 export async function refreshAccessToken() {
-  const response = await fetch('http://127.0.0.1:8000/api/v1/freshcart/user/refresh', {
+  const response = await fetch('https://freshcart-ut38.onrender.com/api/v1/freshcart/user/refresh', {
     method: 'GET',
     credentials: 'include', // Include cookies
   });

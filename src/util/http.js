@@ -4,7 +4,7 @@ import apiClient from './interseptor'
 export const querClient = new QueryClient();
 
 export async function fetchProducts({signal, type, filters, sortBy}) {
-    let url = 'http://127.0.0.1:8000/api/v1/freshcart/';
+    let url = 'https://freshcart-ut38.onrender.com/api/v1/freshcart/';
     if(type === 'featured') {
         url += '?isFeatured=true';
     }else if(type === 'bestSeller') {
@@ -44,7 +44,7 @@ export async function fetchProducts({signal, type, filters, sortBy}) {
 }
 
 export async function fetchProduct({signal, query}) {
-  let url = 'http://127.0.0.1:8000/api/v1/freshcart/';
+  let url = 'https://freshcart-ut38.onrender.com/api/v1/freshcart/';
   const {productId} = query;
   if(productId !== '') {
     url += `${productId}` 
@@ -61,7 +61,7 @@ export async function fetchProduct({signal, query}) {
 }
 
 export async function fetchReviews({signal, query}) {
-  let url = 'http://127.0.0.1:8000/api/v1/freshcart/';
+  let url = 'https://freshcart-ut38.onrender.com/api/v1/freshcart/';
   const {productId} = query;
   if(productId !== '') {
     url += `${productId}/reviews` 
@@ -78,7 +78,7 @@ export async function fetchReviews({signal, query}) {
 }
 
 export async function loginUser(userData) {
-    const response = await fetch('http://127.0.0.1:8000/api/v1/freshcart/user/login', {
+    const response = await fetch('https://freshcart-ut38.onrender.com/api/v1/freshcart/user/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(userData),
@@ -94,7 +94,7 @@ export async function loginUser(userData) {
     return data;
 }
 export async function logoutUser() {
-    const response = await fetch('http://127.0.0.1:8000/api/v1/freshcart/user/logout', {
+    const response = await fetch('https://freshcart-ut38.onrender.com/api/v1/freshcart/user/logout', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
     });
@@ -233,7 +233,7 @@ export const resetPassword = async (data) => {
 
 export const fetchCategoryCounts = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/freshcart/category');
+      const response = await fetch('https://freshcart-ut38.onrender.com/api/v1/freshcart/category');
       if (!response.ok) {
         throw new Error('Failed to fetch category counts');
       }
