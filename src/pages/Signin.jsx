@@ -7,7 +7,7 @@ import {
   faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
-import signInImage from "./assets/login_page_image.jpg";
+import signInImage from "/assets/login_page_image.jpg";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {

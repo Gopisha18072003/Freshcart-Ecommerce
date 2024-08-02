@@ -108,7 +108,7 @@ export default function HomePage() {
             </Link>
           </div>
           <img
-            src="./assets/hero-bg.png"
+            src="/assets/hero-bg.png"
             alt=""
             className="w-auto h-[20rem]  "
           />
@@ -141,7 +141,7 @@ export default function HomePage() {
           </button>
         </div>
       </div>
-      <video src='./assets/fruits fresh.mp4' autoPlay loop muted></video>
+      <video src='/assets/fruits fresh.mp4' autoPlay loop muted></video>
       <div className="flex flex-col justify-center">
         <h1 className="text-center poppins-bold text-3xl">
           Browse All Categories
@@ -492,7 +492,7 @@ export default function HomePage() {
           {
             !isPendingCategoryProducts && categoryProducts.length == 0 && activeCategory && (
               <div className="w-full bg-white mt-8 flex flex-col justify-center items-center">
-                <img src='./assets/noProductFound.png' className="h-[24rem] w-[32rem]"/>
+                <img src='/assets/noProductFound.png' className="h-[24rem] w-[32rem]"/>
                 <p className="py-4 poppins-bold text-xl">No products found</p>
               </div>
             )
@@ -631,7 +631,7 @@ export default function HomePage() {
         </section>
         <div className="absolute right-[-14rem] top-[-2rem] z-10 rounded-full w-[30rem] h-[30rem] overflow-hidden" id='circle'>
         </div> */}
-        <video src='./assets/video1.mp4' autoPlay loop muted className="w-full h-full object-cover"></video>
+        <video src='/assets/video1.mp4' autoPlay loop muted className="w-full h-full object-cover"></video>
       </div>
 
       <div className="flex relative justify-center h-[20rem]  mb-[5em]">

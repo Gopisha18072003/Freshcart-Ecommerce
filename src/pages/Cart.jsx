@@ -42,7 +42,7 @@ export default function Cart() {
           <div className="flex flex-col w-full h-[20.6rem] bg-white overflow-y-auto">
             {items.length == 0 && (
               <div className="flex flex-col items-center justify-center">
-                <img src='./assets/emptyCart.jpg' alt="" className="w-[40%] mx-auto my-0"/>
+                <img src='/assets/emptyCart.jpg' alt="" className="w-[40%] mx-auto my-0"/>
                 <Link to='/shop' className="bg-myGreen-light hover:bg-myGreen-dark rounded-md p-2 poppins-semibold text-white">Go back to shop</Link>
               </div>
             )}
