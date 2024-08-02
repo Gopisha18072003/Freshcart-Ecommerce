@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import CartCard from "../components/CartCard";
-import image from '../assets/emptyCart.jpg'
+import image from './assets/emptyCart.jpg'
 import { Link } from "react-router-dom";
 import {loadStripe} from '@stripe/stripe-js';
 

@@ -6,9 +6,9 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addFilter, removeFilter } from "../store/ui-slice";
-import image from '../assets/noProductFound.png';
-import heroVideo from '../assets/fruits fresh.mp4';
-import bestDeals from '../assets/video1.mp4';
+import image from './assets/noProductFound.png';
+import heroVideo from './assets/fruits fresh.mp4';
+import bestDeals from './assets/video1.mp4';
 
 
 export default function HomePage() {

@@ -6,11 +6,11 @@ import Card from "../ui/Card";
 import { categories } from "../App";
 import FilterTab from "../ui/FilterTab";
 import { useDispatch, useSelector } from "react-redux";
-import image from "../assets/noProductFound.png";
+import image from "./assets/noProductFound.png";
 import { addSortBy } from "../store/ui-slice";
 import { useState } from "react";
-import discountVideo from "../assets/video3.mp4";
-import bannerImage from '../assets/banner.png'
+import discountVideo from "./assets/video3.mp4";
+import bannerImage from './assets/banner.png'
 
 export default function ShopPage() {
   const [searchParams, setSearchParans] = useSearchParams();

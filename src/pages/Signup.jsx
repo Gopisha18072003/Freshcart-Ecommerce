@@ -7,7 +7,7 @@ import {
   faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
-import signupImage from "../assets/signUp.jpg";
+import signupImage from "./assets/signUp.jpg";
 import { useRef } from "react";
 import { useState } from "react";
 import { useNavigate} from "react-router-dom";
