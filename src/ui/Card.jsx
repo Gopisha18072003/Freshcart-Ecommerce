@@ -27,7 +27,7 @@ export default function Card({data:product}) {
     >
       <div className="mb-3 h-[12rem]">
         <img
-          src={`./src/assets/items/${product.image}`}
+          src={`./assets/items/${product.image}`}
           alt={product.name}
           className="w-full h-full rounded-md cursor-pointer"
           onClick={() => handleClickProduct(product._id)}

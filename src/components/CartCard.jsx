@@ -19,7 +19,7 @@ export default function CartCard({ classes, item }) {
       <div className="flex gap-4">
         <div id="image" className="">
           <img
-            src={`./src/assets/items/${product.image}`}
+            src={`./assets/items/${product.image}`}
             alt={product.name}
             className="w-[8rem] h-[8rem] object-cover rounded-md"
           />

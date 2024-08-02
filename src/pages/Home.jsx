@@ -111,7 +111,7 @@ export default function HomePage() {
             </Link>
           </div>
           <img
-            src="./src/assets/hero-bg.png"
+            src="./assets/hero-bg.png"
             alt=""
             className="w-auto h-[20rem]  "
           />
