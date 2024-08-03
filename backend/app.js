@@ -22,7 +22,6 @@ app.use(mongoSanitize());
 
 
 app.use(cors({ 
-    origin: '*',
     credentials: true,
 }));
 
