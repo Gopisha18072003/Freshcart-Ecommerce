@@ -26,6 +26,10 @@ export default function Cart() {
       },
       body: JSON.stringify({cart, userId}),
     });
+    if (!response.ok) {
+      console.error("Failed to create checkout session");
+      return;
+    }
     const session = await response.json();
     const result = stripe.redirectToCheckout({
       sessionId: session.id

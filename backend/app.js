@@ -12,7 +12,7 @@ const app = express();
 const AppError = require('./utils/appError');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-const stripe = require("stripe")(process.env.STRIPE_SECRET)
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const bodyParser = require('body-parser');
 const Orders = require('./models/ordersModel');
 
@@ -20,30 +20,15 @@ app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
 
-
-// CORS configuration
+// Simplified CORS configuration
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow all origins, but set SameSite Strict
-    if (!origin || origin.match(/freshcart-frontend\.onrender\.com|freshcart-ut38\.onrender\.com/)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
+  origin: ['https://freshcart-frontend.onrender.com', 'https://freshcart-ut38.onrender.com'],
+  credentials: true,
 }));
 
 // Handle preflight requests for all routes
 app.options('*', cors({
-  origin: (origin, callback) => {
-    // Allow all origins, but set SameSite Strict
-    if (!origin || origin.match(/freshcart-frontend\.onrender\.com|freshcart-ut38\.onrender\.com/)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: ['https://freshcart-frontend.onrender.com', 'https://freshcart-ut38.onrender.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -78,6 +63,7 @@ async function fulfillCheckout(session) {
 
   console.log(`Order created for session ID: ${session.id}`);
 }
+
 app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (request, response) => {
   const payload = request.body;
   const sig = request.headers['stripe-signature'];
@@ -94,7 +80,7 @@ app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (request,
     event.type === 'checkout.session.completed'
     || event.type === 'checkout.session.async_payment_succeeded'
   ) {
-    fulfillCheckout(event.data.object.id);
+    fulfillCheckout(event.data.object);
   }
 
   response.status(200).json({status: 'success', message: 'Payment completed'});
@@ -107,17 +93,17 @@ app.use(express.json({
 const limitter = rateLimiter({
     max: 100,
     window: 60*60*1000,
-    message: 'Too many requests this IP, please try again later!'
+    message: 'Too many requests from this IP, please try again later!'
 });
-app.use('/uploads/images', express.static(path.join('uploads', 'images')))
-app.use('/uploads/items', express.static(path.join('uploads', 'items')))
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
+app.use('/uploads/items', express.static(path.join('uploads', 'items')));
 
 app.use('/api', limitter);
 app.use('/api/v1/freshcart/', groceryRouter);
 app.post('/api/v1/freshcart/create-checkout-session', async (req, res) => {
     const products = req.body.cart.items;
     const userId = req.body.userId;
-    console.log()
+
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: products.map((product) => ({
@@ -127,7 +113,7 @@ app.post('/api/v1/freshcart/create-checkout-session', async (req, res) => {
               name: product.product.name,
               images: [`${req.protocol}://${req.get('host')}/uploads/items/${product.product.image}`],
             },
-            unit_amount: Math.round(product.product.finalPrice * 100), // Convert to cents and round
+            unit_amount: Math.round(product.product.finalPrice * 100),
           },
           quantity: product.quantity,
         })),
@@ -136,19 +122,23 @@ app.post('/api/v1/freshcart/create-checkout-session', async (req, res) => {
         cancel_url: 'https://freshcart-frontend.onrender.com/cancel',
         metadata: {
           userId: userId,
-          items: JSON.stringify(products) // Convert items array to JSON string
+          items: JSON.stringify(products)
         }
       });
-    res.json({id: session.id})      
+    res.json({id: session.id});
+});
 
-})
 app.use('/api/v1/freshcart/user', UserRouter);
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Freshcart API!');
 });
+
 app.all('*', (req, res, next) => {
     next(new AppError(`Could not find the ${req.originalUrl} route`, 404));
-})
+});
+
 app.use(globalErrorHandler); 
+
 module.exports = app;
+s
