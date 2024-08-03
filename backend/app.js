@@ -24,7 +24,6 @@ app.use(mongoSanitize());
 app.use(cors({
 origin: "https://freshcart-frontend.onrender.com",
 credentials: true, // Important for cookies, authorization headers with HTTPS
-sameSite: "Strict"
 }));
 
 app.use(cookieParser());
@@ -57,7 +56,7 @@ async function fulfillCheckout(session) {
   console.log(`Order created for session ID: ${session.id}`);
 }
 
-app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (request, response) => {
+app.post('/webhook-checkout', bodyParser.raw({type: 'application/json'}), async (request, response) => {
   const payload = request.body;
   const sig = request.headers['stripe-signature'];
 
@@ -93,6 +92,7 @@ app.use('/uploads/items', express.static(path.join('uploads', 'items')));
 
 app.use('/api', limitter);
 app.use('/api/v1/freshcart/', groceryRouter);
+
 app.post('/api/v1/freshcart/create-checkout-session', async (req, res) => {
     const products = req.body.cart.items;
     const userId = req.body.userId;
