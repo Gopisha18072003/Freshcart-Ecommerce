@@ -21,6 +21,7 @@ export default function Cart() {
     console.log("making payment")
     const response = await fetch("https://freshcart-ut38.onrender.com/api/v1/freshcart/create-checkout-session", {
       method: 'POST',
+      mode: 'no-cors',
       headers: {
         "Content-Type": "application/json"
       },
