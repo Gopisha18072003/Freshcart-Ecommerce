@@ -22,9 +22,8 @@ app.use(mongoSanitize());
 
 
 app.use(cors({ 
-    origin: '*',
+    origin: ['https://freshcart-frontend.onrender.com', 'https://freshcart-ut38.onrender.com/'],
     credentials: true,
-    sameSite: 'Strict',
 }));
 
 app.use(cookieParser());

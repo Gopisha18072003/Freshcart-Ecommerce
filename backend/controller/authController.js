@@ -33,7 +33,7 @@ const createSendToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
-    sameSite: 'None',
+    sameSite: 'Strict',
     secure: true, // Ensure secure cookies in production
   };
 
