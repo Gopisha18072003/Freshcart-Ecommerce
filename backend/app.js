@@ -21,7 +21,7 @@ app.use(mongoSanitize());
 
 
 app.use(cors({ 
-    origin: '*',
+    origin: 'https://freshcart-frontend.onrender.com',
     credentials: true,
     sameSite: 'Strict',
 }));
