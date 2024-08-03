@@ -18,6 +18,7 @@ export default function Cart() {
   // payment integration 
   const makePayment = async ()=> {
     const stripe = await loadStripe('pk_test_51PCc9nSBggYrNv4RFFHXQAWbiL2m3pI2qO9uxpAsJj6CiugB2Nqo5yclTRndDrLZe0GsjnBN6oaD138ICYLjEtEE00nV4iDUkM');
+    console.log("making payment")
     const response = await fetch("https://freshcart-ut38.onrender.com/api/v1/freshcart/create-checkout-session", {
       method: 'POST',
       headers: {
