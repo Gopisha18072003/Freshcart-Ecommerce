@@ -14,6 +14,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const stripe = require("stripe")(process.env.STRIPE_SECRET)
 const bodyParser = require('body-parser');
+const Orders = require('./models/ordersModel');
 
 app.use(helmet());
 app.use(xss());
@@ -36,7 +37,25 @@ app.use(hpp({
     ]
 }));
 
+async function fulfillCheckout(session) {
+  const userId = session.metadata.userId;
+  const items = JSON.parse(session.metadata.items);
 
+  const orderData = {
+    userId: userId,
+    items: items.map(item => ({
+      productId: item.product._id,
+      quantity: item.quantity
+    })),
+    totalAmount: session.amount_total,
+    orderDate: new Date()
+  };
+
+  const order = new Orders(orderData);
+  await order.save();
+
+  console.log(`Order created for session ID: ${session.id}`);
+}
 app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (request, response) => {
   const payload = request.body;
   const sig = request.headers['stripe-signature'];
@@ -74,7 +93,9 @@ app.use('/uploads/items', express.static(path.join('uploads', 'items')))
 app.use('/api', limitter);
 app.use('/api/v1/freshcart/', groceryRouter);
 app.post('/api/v1/freshcart/create-checkout-session', async (req, res) => {
-    const products = req.body.items;
+    const products = req.body.cart.items;
+    const userId = req.body.userId;
+    console.log()
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: products.map((product) => ({
@@ -89,8 +110,12 @@ app.post('/api/v1/freshcart/create-checkout-session', async (req, res) => {
           quantity: product.quantity,
         })),
         mode: 'payment',
-        success_url: 'http://localhost:5173/success',
-        cancel_url: 'http://localhost:5173/cancel'
+        success_url: 'https://freshcart-frontend.onrender.com/success',
+        cancel_url: 'https://freshcart-frontend.onrender.com/cancel',
+        metadata: {
+          userId: userId,
+          items: JSON.stringify(products) // Convert items array to JSON string
+        }
       });
     res.json({id: session.id})      
 

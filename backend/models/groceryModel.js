@@ -63,4 +63,4 @@ groceryItemSchema.pre('save', function(next) {
 
 const groceryItems = mongoose.model("groceryItems", groceryItemSchema);
 
-module.exports = groceryItems;
+module.exports =groceryItems ;

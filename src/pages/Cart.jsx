@@ -5,6 +5,7 @@ import {loadStripe} from '@stripe/stripe-js';
 
 export default function Cart() {
   const cart = useSelector((state) => state.cart);
+  const userId = useSelector((state) => state.auth.currentUser._id)
   const { items, total } = cart;
 
   const totalPriceWithoutDiscount = items.reduce(
@@ -22,7 +23,7 @@ export default function Cart() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(cart)
+      body: JSON.stringify({cart, userId})
     });
     const session = await response.json();
     const result = stripe.redirectToCheckout({
