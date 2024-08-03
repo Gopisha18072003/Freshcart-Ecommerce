@@ -25,7 +25,6 @@ export default function Cart() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({cart, userId}),
-      credentials: true
     });
     const session = await response.json();
     const result = stripe.redirectToCheckout({
