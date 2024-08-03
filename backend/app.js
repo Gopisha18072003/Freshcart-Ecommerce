@@ -21,8 +21,30 @@ app.use(xss());
 app.use(mongoSanitize());
 
 
-app.use(cors({ 
-    credentials: true,
+// Allow all origins and credentials
+app.use(cors({
+  origin: (origin, callback) => {
+    if (origin) {
+      callback(null, origin);
+    } else {
+      callback(null, '*');
+    }
+  },
+  credentials: true
+}));
+
+// Handle preflight requests for all routes
+app.options('*', cors({
+  origin: (origin, callback) => {
+    if (origin) {
+      callback(null, origin);
+    } else {
+      callback(null, '*');
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(cookieParser());
