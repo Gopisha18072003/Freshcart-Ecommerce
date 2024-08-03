@@ -38,47 +38,47 @@ app.use(hpp({
     ]
 }));
 
-async function fulfillCheckout(session) {
-  const userId = session.metadata.userId;
-  const items = JSON.parse(session.metadata.items);
+// async function fulfillCheckout(session) {
+//   const userId = session.metadata.userId;
+//   const items = JSON.parse(session.metadata.items);
 
-  const orderData = {
-    userId: userId,
-    items: items.map(item => ({
-      productId: item.product._id,
-      quantity: item.quantity
-    })),
-    totalAmount: session.amount_total,
-    orderDate: new Date()
-  };
+//   const orderData = {
+//     userId: userId,
+//     items: items.map(item => ({
+//       productId: item.product._id,
+//       quantity: item.quantity
+//     })),
+//     totalAmount: session.amount_total,
+//     orderDate: new Date()
+//   };
 
-  const order = new Orders(orderData);
-  await order.save();
+//   const order = new Orders(orderData);
+//   await order.save();
 
-  console.log(`Order created for session ID: ${session.id}`);
-}
+//   console.log(`Order created for session ID: ${session.id}`);
+// }
 
-app.post('/webhook-checkout', bodyParser.raw({type: 'application/json'}), async (request, response) => {
-  const payload = request.body;
-  const sig = request.headers['stripe-signature'];
+// app.post('/webhook-checkout', bodyParser.raw({type: 'application/json'}), async (request, response) => {
+//   const payload = request.body;
+//   const sig = request.headers['stripe-signature'];
 
-  let event;
+//   let event;
 
-  try {
-    event = stripe.webhooks.constructEvent(payload, sig, process.env.WEBHOOK_SECRET);
-  } catch (err) {
-    return response.status(400).send(`Webhook Error: ${err.message}`);
-  }
+//   try {
+//     event = stripe.webhooks.constructEvent(payload, sig, process.env.WEBHOOK_SECRET);
+//   } catch (err) {
+//     return response.status(400).send(`Webhook Error: ${err.message}`);
+//   }
 
-  if (
-    event.type === 'checkout.session.completed'
-    || event.type === 'checkout.session.async_payment_succeeded'
-  ) {
-    fulfillCheckout(event.data.object);
-  }
+//   if (
+//     event.type === 'checkout.session.completed'
+//     || event.type === 'checkout.session.async_payment_succeeded'
+//   ) {
+//     fulfillCheckout(event.data.object);
+//   }
 
-  response.status(200).json({status: 'success', message: 'Payment completed'});
-});
+//   response.status(200).json({status: 'success', message: 'Payment completed'});
+// });
 
 app.use(express.json({
     limit: '10kb'
