@@ -26,6 +26,7 @@ origin: "https://freshcart-frontend.onrender.com",
 credentials: true, // Important for cookies, authorization headers with HTTPS,
      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
 }));
+app.options('*', cors());
 
 app.use(cookieParser());
 app.use(hpp({
