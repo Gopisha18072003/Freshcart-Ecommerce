@@ -115,10 +115,10 @@ app.post('/api/v1/freshcart/create-checkout-session', async (req, res) => {
         mode: 'payment',
         success_url: 'https://freshcart-frontend.onrender.com/success',
         cancel_url: 'https://freshcart-frontend.onrender.com/cancel',
-        metadata: {
-          userId: userId,
-          items: JSON.stringify(products)
-        }
+        // metadata: {
+        //   userId: userId,
+        //   items: JSON.stringify(products)
+        // }
       });
     res.json({id: session.id});
 });
