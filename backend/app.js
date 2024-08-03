@@ -20,11 +20,34 @@ app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
 
+
+// CORS configuration
 app.use(cors({
-  origin: '*',
+  origin: (origin, callback) => {
+    // Allow all origins, but set SameSite Strict
+    if (!origin || origin.match(/freshcart-frontend\.onrender\.com|freshcart-ut38\.onrender\.com/)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+// Handle preflight requests for all routes
+app.options('*', cors({
+  origin: (origin, callback) => {
+    // Allow all origins, but set SameSite Strict
+    if (!origin || origin.match(/freshcart-frontend\.onrender\.com|freshcart-ut38\.onrender\.com/)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-  sameSite: 'Strict'
-}))
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(cookieParser());
 app.use(hpp({
