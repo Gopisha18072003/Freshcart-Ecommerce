@@ -22,7 +22,7 @@ app.use(mongoSanitize());
 
 // Simplified CORS configuration
 app.use(cors({
-origin: "https://freshcart-frontend.onrender.com". 
+origin: "https://freshcart-frontend.onrender.com",
 credentials: true, // Important for cookies, authorization headers with HTTPS
 sameSite: "Strict"
 }));
