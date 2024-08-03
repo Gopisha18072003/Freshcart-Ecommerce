@@ -24,7 +24,7 @@ app.use(mongoSanitize());
 app.use(cors({
 origin: "https://freshcart-frontend.onrender.com",
 credentials: true, // Important for cookies, authorization headers with HTTPS,
-     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
 }));
 
 app.use(cookieParser());
