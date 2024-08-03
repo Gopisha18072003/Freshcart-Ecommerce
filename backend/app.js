@@ -20,32 +20,11 @@ app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
 
-
-// Allow all origins and credentials
 app.use(cors({
-  origin: (origin, callback) => {
-    if (origin) {
-      callback(null, origin);
-    } else {
-      callback(null, '*');
-    }
-  },
-  credentials: true
-}));
-
-// Handle preflight requests for all routes
-app.options('*', cors({
-  origin: (origin, callback) => {
-    if (origin) {
-      callback(null, origin);
-    } else {
-      callback(null, '*');
-    }
-  },
+  origin: 'https://freshcart-frontend.onrender.com/',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  sameSite: 'Strict'
+}))
 
 app.use(cookieParser());
 app.use(hpp({
