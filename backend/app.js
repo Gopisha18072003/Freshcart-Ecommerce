@@ -12,8 +12,8 @@ const app = express();
 const AppError = require('./utils/appError');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-const { toInt } = require('validator');
 const stripe = require("stripe")(process.env.STRIPE_SECRET)
+const bodyParser = require('body-parser');
 
 app.use(helmet());
 app.use(xss());
@@ -25,6 +25,7 @@ app.use(cors({
     credentials: true,
     sameSite: 'Strict',
 }));
+
 app.use(cookieParser());
 app.use(hpp({
     whitelist: [
@@ -36,31 +37,26 @@ app.use(hpp({
 }));
 
 
-app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
+app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (request, response) => {
+  const payload = request.body;
   const sig = request.headers['stripe-signature'];
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(request.body, sig, process.env.WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
   } catch (err) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
-    return;
+    return response.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Handle the event
-  switch (event.type) {
-    case 'payment_intent.succeeded':
-      const paymentIntentSucceeded = event.data.object;
-      // Then define and call a function to handle the event payment_intent.succeeded
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+  if (
+    event.type === 'checkout.session.completed'
+    || event.type === 'checkout.session.async_payment_succeeded'
+  ) {
+    fulfillCheckout(event.data.object.id);
   }
 
-  // Return a 200 response to acknowledge receipt of the event
-  response.send();
+  response.status(200).json({status: 'success', message: 'Payment completed'});
 });
 
 app.use(express.json({
